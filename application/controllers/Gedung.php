@@ -4,9 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Gedung extends CI_Controller {
   private $url = 'http://localhost:8000/api/v1/asrama/gedung';
 
-	public function index()
-	{
-		echo 'GedungController';
+  public function index()
+  {
+    echo 'GedungController';
   }
 
   public function list()
