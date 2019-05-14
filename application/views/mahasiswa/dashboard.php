@@ -1,6 +1,8 @@
 <?php
 $mahasiswa = $json['mahasiswa'];
 $penghunian = $json['penghunian'];
+$kamar = @$penghunian->kamar[0];
+$penghuni = @$penghunian->penghuni;
 $pendampingan = $json['pendampingan'];
 ?>
 
@@ -21,8 +23,20 @@ $pendampingan = $json['pendampingan'];
       <br>
       <br>
       <?php if ($penghunian != null) : ?>
-        Kamu menghuni gedung <strong><?php echo $penghunian->nama_gedung; ?></strong>
-        dengan nomor kamar <strong><?php echo $penghunian->no_kamar; ?></strong>.
+        Kamu menghuni gedung <strong><?php echo $kamar->nama_gedung; ?></strong>
+        dengan nomor kamar <strong><?php echo $kamar->no_kamar; ?></strong>.
+
+        <?php if (count($penghuni) > 1): ?>
+          <br>
+          Bersama dengan:
+          <ol>
+            <?php foreach($penghuni as $p): ?>
+              <?php if ($p->nim != $mahasiswa->nim): ?>
+                <li><?php echo $p->nim; ?></li>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </ol>
+        <?php endif; ?>
       <?php else: ?>
         Kamu belum menghuni gedung mananpun.
       <?php endif; ?>
