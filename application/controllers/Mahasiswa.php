@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Mahasiswa extends CI_Controller {
-  private $url = 'http://localhost:8000/api/v1';
+require __DIR__ . '/../helpers/Api.php';
 
+class Mahasiswa extends CI_Controller {
   public function index()
   {
     echo 'MahasiswaController';
@@ -13,9 +13,11 @@ class Mahasiswa extends CI_Controller {
   {
     if (isset($this->session->type)) {
       if ($this->session->type == 'mahasiswa') {
-        redirect('mahasiswa/dashboard');
+        redirect('/mahasiswa/dashboard');
       } else if ($this->session->type == 'staff') {
-        redirect('staff/dashboard');
+        redirect('/staff/dashboard');
+      } else if ($this->session->type == 'sr') {
+        redirect('/sr/dashboard');
       }
     }
 
@@ -30,7 +32,8 @@ class Mahasiswa extends CI_Controller {
       $username = @$input['username'] ?: '';
       $password = @$input['password'] ?: '';
 
-      $login = $this->api_login($username, $password);
+      $json = json_encode(['username' => $username, 'password' => $password]);
+      $login = (new Api('asrama/mahasiswa/login'))->post($json);
       if ($login->success) {
         $this->session->set_userdata([
           'type' => 'mahasiswa',
@@ -47,33 +50,15 @@ class Mahasiswa extends CI_Controller {
     }
   }
 
-  private function api_login($username, $password) {
-    $json = json_encode(['username' => $username, 'password' => $password]);
-
-    $api = curl_init();
-    curl_setopt($api, CURLOPT_URL, $this->url . '/sm/mahasiswa/login');
-    curl_setopt($api, CURLOPT_POST, true);
-    curl_setopt($api, CURLOPT_POSTFIELDS, $json);
-    curl_setopt($api, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($api, CURLOPT_HTTPHEADER, [
-      'Content-Type: application/json',
-    ]);
-
-    $response = curl_exec($api);
-
-    $result = json_decode($response);
-    curl_close($api);
-
-    return $result;
-  }
-
   public function dashboard() {
     if (isset($this->session->type)) {
       if ($this->session->type == 'staff') {
-        redirect('staff/dashboard');
+        redirect('/staff/dashboard');
+      } else if ($this->session->type == 'sr') {
+        redirect('/sr/dashboard');
       }
     } else {
-      redirect('mahasiswa/login');
+      redirect('/mahasiswa/login');
     }
 
     if ($this->input->method() == 'get') {
@@ -122,6 +107,6 @@ class Mahasiswa extends CI_Controller {
 
   public function logout() {
     $this->session->unset_userdata('type');
-    redirect('mahasiswa/login');
+    redirect('/mahasiswa/login');
   }
 }

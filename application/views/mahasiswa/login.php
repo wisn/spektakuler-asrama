@@ -9,19 +9,37 @@
     </header>
 
     <main>
-      <h2>Mahasiswa</h2>
+      <div class="login container">
+        <div class="title">
+          <p>Masuk Sebagai</p>
+          <h1>Mahasiswa</h1>
+        </div>
 
-      <?php if (isset($json) && !$json->success): ?>
-        <?php echo $json->message; ?>
-      <?php endif; ?>
+        <?php if (isset($json) && !@$json->success): ?>
+          <div class="alert alert-danger" role="alert">
+            <?php echo $json->message; ?>
+          </div>
+        <?php endif; ?>
 
-      <?php echo form_open('mahasiswa/login'); ?>
-        <input name="username" type="text" placeholder="username">
-        <input name="password" type="password" placeholder="password">
-        <input type="submit">
-      <?php echo form_close(); ?>
-      <br>
-      <a href="/staff/login">Masuk sebagai Staff</a>
+        <div class="input-group">
+          <?php echo form_open('mahasiswa/login'); ?>
+            <input class="form-control" name="username" type="text" placeholder="Nama Pengguna">
+            <input class="form-control" name="password" type="password" placeholder="Kata Sandi">
+            <div class="blocked">
+              <input class="btn btn-primary btn-block" type="submit" value="Masuk">
+            </div>
+          <?php echo form_close(); ?>
+        </div>
+
+        <div class="divider"></div>
+        <div align="center">
+          Bukan mahasiswa?<br>
+          Masuk sebagai
+          <a href="/staff/login">Staff</a>
+          atau
+          <a href="/sr/login">Senior Residence</a>.
+        </div>
+      </div>
     </main>
 
     <footer>

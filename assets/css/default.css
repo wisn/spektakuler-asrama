@@ -1,0 +1,213 @@
+body {
+  background-color: #efefef;
+  color: #222;
+  cursor: default;
+}
+
+footer {
+  color: #888;
+  font-size: 10pt;
+  margin: 3em 0 .5em;
+}
+
+.login.container {
+  padding: 6em 2em;
+}
+
+.login.container .title {
+  padding: 1em 0;
+  text-align: center;
+}
+
+.login.container .title p {
+  margin: 0;
+}
+
+.login.container .alert {
+  margin: 0 auto 1em;
+  width: 50%;
+}
+
+.login.container .input-group form {
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+}
+
+.login.container .input-group form input[type=text],
+.login.container .input-group form input[type=password] {
+  margin: 1em 0;
+}
+
+.login.container .input-group form .blocked {
+  display: block;
+  margin: 0 auto;
+  width: 50%;
+}
+
+.login.container .divider {
+  margin: 4em 0;
+}
+
+
+.dashboard.container {
+  min-height: 90vh;
+  padding: 6em 0 1em;
+}
+
+.dashboard.container .title {
+  padding: 1em 0;
+  text-align: center;
+}
+
+.dashboard.container .title p {
+  margin: 0;
+}
+
+.dashboard.container .title h1 {
+  margin: -.25em 0 0;
+}
+
+.dashboard.container .menu {
+  background-color: #dedede;
+  margin: 2em auto 1em;
+  padding: .5em;
+  width: 75%;
+}
+
+.dashboard.container .body {
+  margin: 4em auto 1em;
+  width: 75%;
+}
+
+.dashboard.container .body .nonexistance {
+  margin: 4em 0 1em;
+  text-align: center;
+}
+
+.dashboard.container .existance {
+  margin: 2em 0 1em;
+}
+
+.dashboard.container .existance > .row {
+  background-color: #fff;
+  border: 1px solid #dedede;
+  padding: .5em .25em;
+}
+
+.dashboard.container .existance > .row:nth-child(2n) {
+  background-color: #ffe;
+}
+
+.dashboard.container .existance > .row .name {
+  font-size: 14pt;
+  font-weight: 900;
+}
+
+.dashboard.container .existance > .row .action {
+  margin-top: .5em;
+}
+
+.dashboard.container .existance > .row .addition {
+  font-size: 10pt;
+}
+
+.dashboard.container .existance > .row .addition .label {
+  background-color: #5a6268;
+  border-radius: 2px;
+  color: #fff;
+  padding: 1px 6px;
+}
+
+.dashboard.container .form {
+  margin: 3em auto 1em;
+  width: 50%;
+}
+
+.dashboard.container .form input,
+.dashboard.container .form select,
+.dashboard.container .form textarea {
+  margin: 1em 0;
+}
+
+.dashboard.container .form .blocked {
+  margin: 0 auto;
+  width: 50%;
+}
+
+.dashboard.container .confirm {
+  margin: 6em 0 1em;
+}
+
+.dashboard.container .confirm p {
+  text-align: center;
+}
+
+.dashboard.container .logout {
+  margin: 6em 0 2em;
+  text-align: center;
+}
+
+.dashboard.container .gedung {
+  border: 1px solid #ccc;
+  margin: 0 0 2em;
+}
+
+.dashboard.container .gedung .title {
+  background-color: #ddd;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.dashboard.container .gedung .title h6 {
+  font-weight: 600;
+  margin: 0;
+  padding: .5em 0;
+}
+
+.dashboard.container .gedung .title .btn {
+  margin-top: 2px;
+}
+
+.dashboard.container .gedung .content {
+  margin-left: 10px;
+  margin-right: 10px;
+  padding: 1em 0;
+}
+
+.dashboard.container .gedung .content > .row {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin: -1em -10px 1em;
+  padding: .25em 0;
+}
+
+.dashboard.container .gedung .content > .row:nth-child(2n) {
+  background-color: #ffe;
+}
+
+.dashboard.container .gedung .content > .row:last-child {
+  margin-bottom: -15px;
+}
+
+.dashboard.container .gedung .content .name {
+  font-size: 14pt;
+  font-weight: 900;
+}
+
+.dashboard.container .gedung .content .action {
+  margin-top: .5em;
+}
+
+.dashboard.container .gedung .addition {
+  font-size: 10pt;
+}
+
+.dashboard.container .gedung .addition .label {
+  background-color: #5a6268;
+  border-radius: 2px;
+  color: #fff;
+  margin: 0 2px;
+  padding: 1px 4px;
+}
