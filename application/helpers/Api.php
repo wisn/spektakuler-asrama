@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api {
-  private $url = 'http://localhost:8000/api/v1/';
+  private $url = 'https://spektakuler-staging.herokuapp.com/api/v1/';
   private $path = '';
   private $error_response;
 
