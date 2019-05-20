@@ -63,6 +63,7 @@
                     <div class="col-9">
                       <div class="name"><?php echo $m->nama; ?> (<?php echo $m->nim; ?>)</div>
                       <div class="addition">
+                        <span class="label"><?php echo ($m->gender == 'L' ? 'Laki-Laki' : 'Perempuan'); ?></span>
                         <?php if (is_object($m->kamar) && $m->kamar->success): ?>
                           <span class="label">Kamar <?php echo $m->kamar->data[0]->no_kamar; ?></span>
                         <?php else: ?>

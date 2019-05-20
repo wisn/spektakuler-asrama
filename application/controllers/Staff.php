@@ -652,6 +652,9 @@ class Staff extends CI_Controller {
       case 'remove':
         $this->mahasiswaDelete($id_mahasiswa);
         break;
+      case 'edit':
+        $this->mahasiswaNew($id_mahasiswa);
+        break;
     }
   }
 
@@ -687,6 +690,67 @@ class Staff extends CI_Controller {
       (new Api('asrama/penghuni/' . $id_mahasiswa . '/remove'))->delete();
 
       redirect('/staff/mahasiswa/list');
+    }
+  }
+
+  private function mahasiswaNew($id_mahasiswa) {
+    if ($this->input->method() == 'get') {
+      $mahasiswa = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get();
+      $data = [
+        'title' => 'Assign Kamar Mahasiswa',
+        'mahasiswa' => $mahasiswa,
+        'id_gedung' => null,
+        'gedung' => (new Api('asrama/gedung/list/' . ($mahasiswa->data[0]->gender == 'L' ? 'putra' : 'putri')))->get(),
+        'id_kamar' => null,
+        'kamar' => null,
+      ];
+
+      $this->load->view('staff/mahasiswa/edit', $data);
+    } else if ($this->input->method() == 'post') {
+      $input = $this->input->post(null, true);
+      $id_gedung = @$input['id_gedung'] ?: null;
+      $id_kamar = @$input['id_kamar'] ?: null;
+
+      if ($id_gedung == null) {
+        redirect('/staff/mahasiswa/edit/' . $id_mahasiswa);
+      } else if ($id_kamar == null) {
+        $mahasiswa = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get();
+        $gender = $mahasiswa->data[0]->gender;
+        $data = [
+          'title' => 'Assign Kamar Mahasiswa',
+          'mahasiswa' => $mahasiswa,
+          'id_gedung' => $id_gedung,
+          'gedung' => (new Api('asrama/gedung/list/' . ($gender == 'L' ? 'putra' : 'putri')))->get(),
+          'id_kamar' => null,
+          'kamar' => (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/mahasiswa'))->get(),
+        ];
+
+        $this->load->view('staff/mahasiswa/edit', $data);
+      } else {
+        $json = json_encode([
+          'id_mahasiswa' => $id_mahasiswa,
+          'id_kamar' => $id_kamar,
+        ]);
+        $submit = (new Api('asrama/penghuni/new'))->post($json);
+
+        if ($submit->success) {
+          redirect('/staff/mahasiswa/list');
+        } else {
+          $mahasiswa = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get();
+          $gender = $mahasiswa->data[0]->gender;
+          $data = [
+            'title' => 'Assign Kamar Mahasiswa',
+            'mahasiswa' => $mahasiswa,
+            'id_gedung' => $id_gedung,
+            'gedung' => (new Api('asrama/gedung/list/' . ($gender == 'L' ? 'putra' : 'putri')))->get(),
+            'id_kamar' => null,
+            'kamar' => (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/mahasiswa'))->get(),
+            'json' => $submit,
+          ];
+
+          $this->load->view('staff/mahasiswa/edit', $data);
+        }
+      }
     }
   }
 }
