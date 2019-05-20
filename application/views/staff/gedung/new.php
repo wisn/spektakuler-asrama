@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-3">
               <a class="btn btn-secondary btn-block" href="/staff/mahasiswa/list">
-                Mahasiswa Baru
+                Mahasiswa
               </a>
             </div>
           </div>

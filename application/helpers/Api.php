@@ -15,7 +15,7 @@ class Api {
     ];
   }
 
-  public function post($data) {
+  public function post($data = '') {
     $api = curl_init();
     curl_setopt($api, CURLOPT_URL, $this->url . $this->path);
     curl_setopt($api, CURLOPT_POST, true);
@@ -71,6 +71,7 @@ class Api {
     curl_setopt($api, CURLOPT_HEADER, false);
 
     $response = curl_exec($api);
+    var_dump($response);
     $info = curl_getinfo($api);
 
     $result;
@@ -86,7 +87,7 @@ class Api {
     return $result;
   }
 
-  public function put($data) {
+  public function put($data = '') {
     $api = curl_init();
     curl_setopt($api, CURLOPT_URL, $this->url . $this->path);
     curl_setopt($api, CURLOPT_CUSTOMREQUEST, 'PUT');

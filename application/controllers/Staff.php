@@ -324,4 +324,247 @@ class Staff extends CI_Controller {
       }
     }
   }
+
+  public function sr($action, $params = null) {
+    if (isset($this->session->type)) {
+      if ($this->session->type == 'mahasiswa') {
+        redirect('/mahasiswa/dashboard');
+      } else if ($this->session->type == 'sr') {
+        redirect('/sr/dashboard');
+      }
+    } else {
+      redirect('/staff/login');
+    }
+
+    switch($action) {
+      case 'list':
+        $this->srList();
+        break;
+      case 'remove':
+        $this->srDelete($params);
+        break;
+      case 'new':
+        $this->srNew();
+        break;
+      case 'edit':
+        $this->srEdit($params);
+        break;
+      case 'unassign':
+        $this->srUnassign($params);
+        break;
+    }
+  }
+
+  private function srList() {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Daftar Kamar',
+        'json' => [
+          'unassigned' => (new Api('asrama/sr/list/unassigned'))->get(),
+          'assigned' => (new Api('asrama/sr/list/assigned'))->get(),
+        ],
+      ];
+
+      if (is_object($data['json']['assigned'])) {
+        for ($i = 0; $i < count($data['json']['assigned']->data); $i++) {
+          $id_gedung = $data['json']['assigned']->data[$i]->id_gedung;
+          $id_mahasiswa = $data['json']['assigned']->data[$i]->id_mahasiswa;
+          $data['json']['assigned']->data[$i]->gedung = (new Api('asrama/gedung/' . $id_gedung . '/show'))->get();
+          $data['json']['assigned']->data[$i]->kamar = (new Api('asrama/penghuni/kamar/' . $id_mahasiswa))->get();
+        }
+      }
+
+      $this->load->view('staff/sr/list', $data);
+    }
+  }
+
+  private function srDelete($params) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Hapus SR',
+        'json' => (new Api('asrama/sr/' . $params . '/show'))->get(),
+      ];
+
+      $this->load->view('staff/sr/remove', $data);
+    } else if ($this->input->method() == 'post') {
+      (new Api('asrama/sr/' . $params . '/remove'))->delete();
+      redirect('/staff/sr/list');
+    }
+  }
+
+  private function srNew() {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Tambah SR',
+      ];
+
+      $this->load->view('staff/sr/new', $data);
+    } else if ($this->input->method() == 'post') {
+      $input = $this->input->post(null, true);
+      $nim = @$input['nim'] ?: null;
+      $username = @$input['username'] ?: null;
+      $password = @$input['password'] ?: null;
+
+      $json = json_encode([
+        'nim' => $nim,
+        'username' => $username,
+        'password' => $password,
+      ]);
+
+      $submit = (new Api('asrama/sr/new'))->post($json);
+      if ($submit->success) {
+        redirect('/staff/sr/list');
+      } else {
+        $data = [
+          'title' => 'Tambah SR',
+          'json' => $submit,
+        ];
+
+        $this->load->view('staff/sr/new' , $data);
+      }
+    }
+  }
+
+  private function srEdit($params) {
+    if ($this->input->method() == 'get') {
+      $sr = (new Api('asrama/sr/' . $params . '/show'))->get();
+      $gender = $sr->data->gender == 'L' ? 'putra' : 'putri';
+
+      $data = [
+        'title' => 'Assign Gedung',
+        'sr' => $sr,
+        'gedung' => (new Api('asrama/gedung/list/' . $gender))->get(),
+      ];
+
+      $this->load->view('staff/sr/edit', $data);
+    } else if ($this->input->method() == 'post') {
+      $input = $this->input->post(null, true);
+      $id_gedung = @$input['id_gedung'] ?: null;
+
+      $json = json_encode([
+        'id_gedung' => $id_gedung,
+      ]);
+
+      $submit = (new Api('asrama/sr/' . $params . '/update'))->put($json);
+      if ($submit->success) {
+        redirect('/staff/sr/list');
+      } else {
+        $sr = (new Api('asrama/sr/' . $params . '/show'))->get();
+        $gender = $sr->data->gender == 'L' ? 'putra' : 'putri';
+
+        $data = [
+          'title' => 'Assign Gedung',
+          'sr' => $sr,
+          'gedung' => (new Api('asrama/gedung/list/' . $gender))->get(),
+          'json' => $submit,
+        ];
+
+        $this->load->view('staff/sr/edit', $data);
+      }
+    }
+  }
+
+  private function srUnassign($params) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Unassign Gedung',
+        'json' => (new Api('asrama/sr/' . $params . '/show'))->get(),
+      ];
+
+      $this->load->view('staff/sr/unassign', $data);
+    } else if ($this->input->method() == 'post') {
+      $json = json_encode([
+        'id_gedung' => 0,
+      ]);
+      (new Api('asrama/sr/' . $params . '/update'))->put($json);
+
+      redirect('/staff/sr/list');
+    }
+  }
+
+  public function penghuni($category = null, $id_mahasiswa = null, $id_gedung = null, $action = null) {
+    if (isset($this->session->type)) {
+      if ($this->session->type == 'mahasiswa') {
+        redirect('/mahasiswa/dashboard');
+      } else if ($this->session->type == 'sr') {
+        redirect('/sr/dashboard');
+      }
+    } else {
+      redirect('/staff/login');
+    }
+
+    switch ($category) {
+      case 'sr':
+        $this->penghuniSr($id_mahasiswa, $id_gedung, $action);
+        break;
+    }
+  }
+
+  private function penghuniSr($id_mahasiswa, $id_gedung, $action) {
+    switch ($action) {
+      case 'new':
+        $this->penghuniSrNew($id_mahasiswa, $id_gedung);
+        break;
+      case 'remove':
+        $this->penghuniSrDelete($id_mahasiswa, $id_gedung);
+        break;
+    }
+  }
+
+  private function penghuniSrNew($id_mahasiswa, $id_gedung) {
+    if ($this->input->method() == 'get') {
+      $kamar = (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/sr'))->get();
+      $mahasiswa = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get();
+      $data = [
+        'title' => 'Assign Hunian SR',
+        'mahasiswa' => $mahasiswa,
+        'id_gedung' => $id_gedung,
+        'kamar' => $kamar,
+      ];
+
+      $this->load->view('staff/penghuni/new', $data);
+    } else if ($this->input->method() == 'post') {
+      $input = $this->input->post(null, true);
+      $id_kamar = $input['id_kamar'] ?: null;
+
+      $json = json_encode([
+        'id_mahasiswa' => $id_mahasiswa,
+        'id_kamar' => $id_kamar,
+      ]);
+
+      $submit = (new Api('asrama/penghuni/new'))->post($json);
+      if ($submit->success) {
+        redirect('/staff/sr/list');
+      } else {
+        $kamar = (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/sr'))->get();
+        $mahasiswa = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get();
+        $data = [
+          'title' => 'Assign Hunian SR',
+          'mahasiswa' => $mahasiswa,
+          'id_gedung' => $id_gedung,
+          'kamar' => $kamar,
+          'json' => $submit,
+        ];
+
+        $this->load->view('staff/penghuni/new', $data);
+      }
+    }
+  }
+
+  private function penghuniSrDelete($id_mahasiswa, $id_kamar) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Unassign Kamar',
+        'id_mahasiswa' => $id_mahasiswa,
+        'id_kamar' => $id_kamar,
+        'json' => (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get(),
+      ];
+
+      $this->load->view('staff/penghuni/remove', $data);
+    } else if ($this->input->method() == 'post') {
+      (new Api('asrama/penghuni/' . $id_mahasiswa . '/remove'))->delete();
+
+      redirect('/staff/sr/list');
+    }
+  }
 }

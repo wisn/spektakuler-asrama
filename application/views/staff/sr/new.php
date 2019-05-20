@@ -18,7 +18,7 @@
         <div class="menu">
           <div class="top row">
             <div class="col-md-3">
-              <a class="btn btn-primary btn-block" href="/staff/gedung/list">
+              <a class="btn btn-secondary btn-block" href="/staff/gedung/list">
                 Gedung
               </a>
             </div>
@@ -28,7 +28,7 @@
               </a>
             </div>
             <div class="col-md-3">
-              <a class="btn btn-secondary btn-block" href="/staff/sr/list">
+              <a class="btn btn-primary btn-block" href="/staff/sr/list">
                 Senior Residence
               </a>
             </div>
@@ -43,32 +43,33 @@
         <div class="body">
           <div class="row">
             <div class="col-9">
-              <h2>Hapus Gedung</h2>
+              <h2>Tambah SR</h2>
+            </div>
+            <div class="col-3">
+              <a class="btn btn-danger btn-block" href="/staff/sr/list">
+                Kembali
+              </a>
             </div>
           </div>
 
-          <?php if (!is_object($json)): ?>
-            <div class="nonexistance">
-              Tidak dapat meneruskan aksi. Sepertinya terjadi masalah dengan server.
-            </div>
-          <?php elseif (!$json->success): ?>
-            <div class="nonexistance">
-              Tidak dapat meneruskan aksi. Data yang ingin dihapus tidak ada.
-            </div>
-          <?php else: ?>
-            <div class="confirm">
-              <p>
-                Apakah Anda yakin untuk menghapus
-                <strong>Gedung <?php echo $json->data->nama; ?></strong>?
-              </p>
-              <div align="center">
-                <?php echo form_open('/staff/gedung/remove/' . $json->data->id_gedung); ?>
-                  <input type="submit" class="btn btn-danger" value="Hapus">
-                  <a href="/staff/gedung/list" class="btn btn-primary">Batal</a>
-                <?php echo form_close(); ?>
+          <div class="form">
+            <?php if (isset($json) && !$json->success): ?>
+              <div class="alert alert-danger" role="alert">
+                <?php echo $json->message; ?>
               </div>
-            </div>
-          <?php endif; ?>
+            <?php endif; ?>
+
+            <?php echo form_open('/staff/sr/new'); ?>
+              <input type="number" name="nim" placeholder="NIM Mahasiswa*" class="form-control">
+              <input type="text" name="username" placeholder="Username*" class="form-control">
+              <input type="password" name="password" placeholder="Password*" class="form-control">
+              <div class="blocked">
+                <input type="submit" value="Kirim" class="btn btn-primary btn-block">
+              </div>
+            <?php echo form_close(); ?>
+
+            <p>*) Wajib diisi</p>
+          </div>
         </div>
 
         <div class="logout">

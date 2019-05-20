@@ -18,7 +18,7 @@
         <div class="menu">
           <div class="top row">
             <div class="col-md-3">
-              <a class="btn btn-primary btn-block" href="/staff/gedung/list">
+              <a class="btn btn-secondary btn-block" href="/staff/gedung/list">
                 Gedung
               </a>
             </div>
@@ -28,7 +28,7 @@
               </a>
             </div>
             <div class="col-md-3">
-              <a class="btn btn-secondary btn-block" href="/staff/sr/list">
+              <a class="btn btn-primary btn-block" href="/staff/sr/list">
                 Senior Residence
               </a>
             </div>
@@ -43,7 +43,7 @@
         <div class="body">
           <div class="row">
             <div class="col-9">
-              <h2>Hapus Gedung</h2>
+              <h2>Hapus SR</h2>
             </div>
           </div>
 
@@ -58,13 +58,13 @@
           <?php else: ?>
             <div class="confirm">
               <p>
-                Apakah Anda yakin untuk menghapus
-                <strong>Gedung <?php echo $json->data->nama; ?></strong>?
+                Apakah Anda yakin untuk menghapus SR
+                <strong><?php echo $json->data->nama; ?> (<?php echo $json->data->nim; ?>)</strong>?
               </p>
               <div align="center">
-                <?php echo form_open('/staff/gedung/remove/' . $json->data->id_gedung); ?>
+                <?php echo form_open('/staff/sr/remove/' . $json->data->id_sr); ?>
                   <input type="submit" class="btn btn-danger" value="Hapus">
-                  <a href="/staff/gedung/list" class="btn btn-primary">Batal</a>
+                  <a href="/staff/sr/list" class="btn btn-primary">Batal</a>
                 <?php echo form_close(); ?>
               </div>
             </div>
