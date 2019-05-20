@@ -135,7 +135,7 @@
                       <?php endif; ?>
                     </div>
                     <div class="col-4">
-                      <a class="btn btn-secondary btn-sm btn-block" href="/staff/pendamping/<?php echo $s->id_sr; ?>/<?php echo $s->id_gedung; ?>">
+                      <a class="btn btn-secondary btn-sm btn-block" href="/staff/pendamping/<?php echo $s->id_sr; ?>/<?php echo $s->id_gedung; ?>/new">
                         Assign Kamar
                       </a>
                     </div>
@@ -146,6 +146,15 @@
                     </div>
                   </div>
                 </div>
+                <?php if (is_object($s->pendampingan) && count($s->pendampingan->data) > 0): ?>
+                  <div class="labelous col-12">
+                    <hr>
+                    Mendampingi kamar
+                    <?php foreach ($s->pendampingan->data as $p): ?>
+                      <a class="label" href="/staff/pendamping/<?php echo $s->id_sr; ?>/<?php echo $p->id_kamar; ?>/remove" title="Unassign Kamar"><?php echo $p->no_kamar; ?></a>
+                    <?php endforeach; ?>
+                  </div>
+                <?php endif; ?>
               </div>
             <?php endforeach; ?>
             </div>

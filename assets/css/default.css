@@ -211,3 +211,19 @@ footer {
   margin: 0 2px;
   padding: 1px 4px;
 }
+
+.dashboard.container .labelous {
+  font-size: 10pt;
+}
+
+.dashboard.container .labelous hr {
+  margin: .5em 0;
+}
+
+.dashboard.container .labelous a.label {
+  background-color: #c82333;
+  border-radius: 2px;
+  color: #fff;
+  margin: 0 2px;
+  padding: 1px 4px;
+}

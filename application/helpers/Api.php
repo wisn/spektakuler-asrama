@@ -71,7 +71,6 @@ class Api {
     curl_setopt($api, CURLOPT_HEADER, false);
 
     $response = curl_exec($api);
-    var_dump($response);
     $info = curl_getinfo($api);
 
     $result;

@@ -367,10 +367,12 @@ class Staff extends CI_Controller {
 
       if (is_object($data['json']['assigned'])) {
         for ($i = 0; $i < count($data['json']['assigned']->data); $i++) {
+          $id_sr = $data['json']['assigned']->data[$i]->id_sr;
           $id_gedung = $data['json']['assigned']->data[$i]->id_gedung;
           $id_mahasiswa = $data['json']['assigned']->data[$i]->id_mahasiswa;
           $data['json']['assigned']->data[$i]->gedung = (new Api('asrama/gedung/' . $id_gedung . '/show'))->get();
           $data['json']['assigned']->data[$i]->kamar = (new Api('asrama/penghuni/kamar/' . $id_mahasiswa))->get();
+          $data['json']['assigned']->data[$i]->pendampingan = (new Api('asrama/pendamping/' . $id_sr . '/list'))->get();
         }
       }
 
@@ -563,6 +565,80 @@ class Staff extends CI_Controller {
       $this->load->view('staff/penghuni/remove', $data);
     } else if ($this->input->method() == 'post') {
       (new Api('asrama/penghuni/' . $id_mahasiswa . '/remove'))->delete();
+
+      redirect('/staff/sr/list');
+    }
+  }
+
+  public function pendamping($id_sr = null, $id_gedung = null, $action = null) {
+    if (isset($this->session->type)) {
+      if ($this->session->type == 'mahasiswa') {
+        redirect('/mahasiswa/dashboard');
+      } else if ($this->session->type == 'sr') {
+        redirect('/sr/dashboard');
+      }
+    } else {
+      redirect('/staff/login');
+    }
+
+    switch ($action) {
+      case 'new':
+        $this->pendampingNew($id_sr, $id_gedung);
+        break;
+      case 'remove':
+        $this->pendampingDelete($id_sr, $id_gedung);
+        break;
+    }
+  }
+
+  private function pendampingNew($id_sr, $id_gedung) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Tambah Pendampingan SR',
+        'id_gedung' => $id_gedung,
+        'sr' => (new Api('asrama/sr/' . $id_sr . '/show'))->get(),
+        'kamar' => (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/mahasiswa'))->get(),
+      ];
+
+      $this->load->view('staff/pendamping/new', $data);
+    } else if ($this->input->method() == 'post') {
+      $input = $this->input->post(null, true);
+      $id_kamar = $input['id_kamar'] ?: null;
+
+      $json = json_encode([
+        'id_sr' => $id_sr,
+        'id_kamar' => $id_kamar,
+      ]);
+
+      $submit = (new Api('asrama/pendamping/new'))->post($json);
+      if ($submit->success) {
+        redirect('/staff/sr/list');
+      } else {
+        $data = [
+          'title' => 'Tambah Pendampingan SR',
+          'id_gedung' => $id_gedung,
+          'sr' => (new Api('asrama/sr/' . $id_sr . '/show'))->get(),
+          'kamar' => (new Api('asrama/gedung/list/' . $id_gedung . '/kamar/mahasiswa'))->get(),
+          'json' => $submit,
+        ];
+
+        $this->load->view('staff/pendamping/new', $data);
+      }
+    }
+  }
+
+  private function pendampingDelete($id_sr, $id_kamar) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Unassign Pendampingan SR',
+        'id_kamar' => $id_kamar,
+        'kamar' => (new Api('asrama/kamar/' . $id_kamar . '/show'))->get(),
+        'sr' => (new Api('asrama/sr/' . $id_sr . '/show'))->get(),
+      ];
+
+      $this->load->view('staff/pendamping/remove', $data);
+    } else if ($this->input->method() == 'post') {
+      (new Api('asrama/pendamping/' . $id_sr . '/' . $id_kamar . '/remove'))->delete();
 
       redirect('/staff/sr/list');
     }
