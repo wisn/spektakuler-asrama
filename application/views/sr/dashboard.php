@@ -123,7 +123,7 @@
         </div>
 
         <div class="logout">
-          <a href="/mahasiswa/logout">Keluar</a>
+          <a href="/sr/logout">Keluar</a>
         </div>
       </div>
     </main>

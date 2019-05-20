@@ -41,7 +41,7 @@
                 <div class="nonexistance">
                   Tidak ada data penghuni. Sepertinya terjadi masalah dengan server.
                 </div>
-              <?php elseif (count($penghuni->data) < 2): ?>
+              <?php elseif (count($penghuni->data) < 1): ?>
                 <div class="nonexistance"> 
                   Tidak ada data penghuni.
                 </div>
@@ -67,7 +67,7 @@
         </div>
 
         <div class="logout">
-          <a href="/mahasiswa/logout">Keluar</a>
+          <a href="/sr/logout">Keluar</a>
         </div>
       </div>
     </main>
