@@ -35,16 +35,19 @@ class Mahasiswa extends CI_Controller {
       $json = json_encode(['username' => $username, 'password' => $password]);
       $login = (new Api('asrama/mahasiswa/login'))->post($json);
       if ($login->success) {
+        $mahasiswa = $login->data[0];
         $this->session->set_userdata([
           'type' => 'mahasiswa',
-          'mahasiswa' => $login->data[0],
+          'mahasiswa' => $mahasiswa,
         ]);
+
         redirect('/mahasiswa/dashboard');
       } else {
           $data = [
             'title' => 'Masuk Sebagai Mahasiswa',
             'json' => $login,
           ];
+
           $this->load->view('mahasiswa/login', $data);
       }
     }
@@ -61,52 +64,22 @@ class Mahasiswa extends CI_Controller {
       redirect('/mahasiswa/login');
     }
 
+    $id_mahasiswa = $this->session->mahasiswa->id_mahasiswa;
     if ($this->input->method() == 'get') {
-      $penghunian = $this->api_penghunian($this->session->mahasiswa->nim);
-      $pendampingan = $this->api_pendampingan($this->session->mahasiswa->nim);
       $data = [
         'title' => 'Dashboard Mahasiswa',
-        'json' => [
-          'mahasiswa' => $this->session->mahasiswa,
-          'penghunian' => $penghunian->data,
-          'pendampingan' => $pendampingan->data,
-        ],
+        'hunian' => (new Api('asrama/penghuni/detail/' . $id_mahasiswa))->get(),
+        'pendamping' => (new Api('asrama/pendamping/mahasiswa/' . $id_mahasiswa))->get(),
+        'penghuni' => (new Api('asrama/penghuni/list/mahasiswa/' . $id_mahasiswa))->get(),
       ];
 
       $this->load->view('mahasiswa/dashboard', $data);
     }
   }
 
-  private function api_pendampingan($nim) {
-    $api = curl_init();
-    curl_setopt($api, CURLOPT_URL, $this->url . '/asrama/pendamping/' . $nim . '/assigned');
-    curl_setopt($api, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($api, CURLOPT_HEADER, false);
-
-    $response = curl_exec($api);
-    $result = json_decode($response);
-
-    curl_close($api);
-
-    return $result;
-  }
-
-  private function api_penghunian($nim) {
-    $api = curl_init();
-    curl_setopt($api, CURLOPT_URL, $this->url . '/asrama/penghuni/' . $nim . '/assigned');
-    curl_setopt($api, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($api, CURLOPT_HEADER, false);
-
-    $response = curl_exec($api);
-    $result = json_decode($response);
-
-    curl_close($api);
-
-    return $result;
-  }
-
   public function logout() {
     $this->session->unset_userdata('type');
+    $this->session->unset_userdata('mahasiswa');
     redirect('/mahasiswa/login');
   }
 }
