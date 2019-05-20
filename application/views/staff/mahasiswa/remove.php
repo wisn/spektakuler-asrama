@@ -18,7 +18,7 @@
         <div class="menu">
           <div class="top row">
             <div class="col-md-3">
-              <a class="btn btn-primary btn-block" href="/staff/gedung/list">
+              <a class="btn btn-secondary btn-block" href="/staff/gedung/list">
                 Gedung
               </a>
             </div>
@@ -33,7 +33,7 @@
               </a>
             </div>
             <div class="col-md-3">
-              <a class="btn btn-secondary btn-block" href="/staff/mahasiswa/list">
+              <a class="btn btn-primary btn-block" href="/staff/mahasiswa/list">
                 Mahasiswa
               </a>
             </div>
@@ -43,28 +43,31 @@
         <div class="body">
           <div class="row">
             <div class="col-9">
-              <h2>Hapus Gedung</h2>
+              <h2>Unassign Kamar Mahasiswa</h2>
             </div>
           </div>
 
-          <?php if (!is_object($json)): ?>
+          <?php if (!is_object($mahasiswa)): ?>
             <div class="nonexistance">
               Tidak dapat meneruskan aksi. Sepertinya terjadi masalah dengan server.
             </div>
-          <?php elseif (!$json->success): ?>
+          <?php elseif (!$mahasiswa->success): ?>
             <div class="nonexistance">
               Tidak dapat meneruskan aksi. Data yang ingin dihapus tidak ada.
             </div>
           <?php else: ?>
             <div class="confirm">
               <p>
-                Apakah Anda yakin untuk menghapus
-                <strong>Gedung <?php echo $json->data->nama; ?></strong>?
+                Apakah Anda yakin untuk melakukan unassign mahasiswa
+                <strong><?php echo $mahasiswa->data[0]->nama; ?></strong>
+                (<strong><?php echo $mahasiswa->data[0]->nim; ?></strong>)
+                untuk
+                <strong>Kamar <?php echo $kamar->data[0]->no_kamar; ?></strong>?
               </p>
               <div align="center">
-                <?php echo form_open('/staff/gedung/remove/' . $json->data->id_gedung); ?>
+                <?php echo form_open('/staff/mahasiswa/remove/' . $mahasiswa->data[0]->id_mahasiswa); ?>
                   <input type="submit" class="btn btn-danger" value="Hapus">
-                  <a href="/staff/gedung/list" class="btn btn-primary">Batal</a>
+                  <a href="/staff/mahasiswa/list" class="btn btn-primary">Batal</a>
                 <?php echo form_close(); ?>
               </div>
             </div>

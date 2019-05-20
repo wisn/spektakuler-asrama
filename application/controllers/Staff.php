@@ -358,7 +358,7 @@ class Staff extends CI_Controller {
   private function srList() {
     if ($this->input->method() == 'get') {
       $data = [
-        'title' => 'Daftar Kamar',
+        'title' => 'Daftar Senior Residence',
         'json' => [
           'unassigned' => (new Api('asrama/sr/list/unassigned'))->get(),
           'assigned' => (new Api('asrama/sr/list/assigned'))->get(),
@@ -641,6 +641,52 @@ class Staff extends CI_Controller {
       (new Api('asrama/pendamping/' . $id_sr . '/' . $id_kamar . '/remove'))->delete();
 
       redirect('/staff/sr/list');
+    }
+  }
+
+  public function mahasiswa($path, $id_mahasiswa = null) {
+    switch ($path) {
+      case 'list':
+        $this->mahasiswaList();
+        break;
+      case 'remove':
+        $this->mahasiswaDelete($id_mahasiswa);
+        break;
+    }
+  }
+
+  private function mahasiswaList() {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Daftar Mahasiswa',
+        'json' => (new Api('asrama/mahasiswa/list/detail'))->get(),
+      ];
+
+      if (is_object($data['json']) && $data['json']->success) {
+        for ($i = 0; $i < count($data['json']->data); $i++) {
+          $id_mahasiswa = $data['json']->data[$i]->id_mahasiswa;
+          $data['json']->data[$i]->kamar = (new Api('asrama/penghuni/kamar/' . $id_mahasiswa))->get();
+          $data['json']->data[$i]->is_sr = (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/is-sr'))->get();
+        }
+      }
+
+      $this->load->view('staff/mahasiswa/list', $data);
+    }
+  }
+
+  private function mahasiswaDelete($id_mahasiswa) {
+    if ($this->input->method() == 'get') {
+      $data = [
+        'title' => 'Unassign Kamar Mahasiswa',
+        'mahasiswa' => (new Api('asrama/mahasiswa/' . $id_mahasiswa . '/show'))->get(),
+        'kamar' => (new Api('asrama/penghuni/kamar/' . $id_mahasiswa))->get(),
+      ];
+
+      $this->load->view('staff/mahasiswa/remove', $data);
+    } else {
+      (new Api('asrama/penghuni/' . $id_mahasiswa . '/remove'))->delete();
+
+      redirect('/staff/mahasiswa/list');
     }
   }
 }

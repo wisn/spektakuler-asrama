@@ -68,7 +68,7 @@
                   <div class="col-md-8">
                     <div class="name">Gedung <?php echo $g->nama; ?></div>
                     <div class="addition">
-                      <span class="label"><?php echo ucfirst($g->kategori); ?></span>
+                      <span class="label">Asrama <?php echo ucfirst($g->kategori); ?></span>
                       Kapasitas (<?php echo $g->tersisa; ?>/<?php echo $g->kapasitas; ?>)
                     </div>
                   </div>
